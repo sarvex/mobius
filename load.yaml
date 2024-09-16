@@ -1,6 +1,6 @@
 name: Pandas Load DataFrame in CSV format
 description: |-
-  Transform DataFrame loaded from a CSV file.
+  Load DataFrame from a CSV file.
 
       Inputs:
           table: Table to transform.
@@ -40,24 +40,13 @@ implementation:
           table_path,
           transformed_table_path,
       ):
-          '''Transform DataFrame loaded from a CSV file.
-
-          Inputs:
-              table: Table to transform.
-
-          Outputs:
-              transformed_table: Transformed table.
-
-          Annotations:
-              author: Alexey Volkov <alexey.volkov@ark-kun.com>
-          '''
           import pandas
 
           df = pandas.read_csv(
               table_path,
           )
-          # The namespace is needed so that the code can replace `df`. For example df = df[['X']]
-          df = df.drop(columns=["was_tipped"])
+
+          df.insert(0, "was_tipped", df["tips"] > 0); del df["tips"]; df = df.fillna(0)
           df.to_csv(
               transformed_table_path,
               index=False,

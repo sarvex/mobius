@@ -40,17 +40,6 @@ implementation:
           table_path,
           transformed_table_path,
       ):
-          '''Transform DataFrame loaded from a CSV file.
-
-          Inputs:
-              table: Table to transform.
-
-          Outputs:
-              transformed_table: Transformed table.
-
-          Annotations:
-              author: Alexey Volkov <alexey.volkov@ark-kun.com>
-          '''
           import pandas
 
           df = pandas.read_csv(
