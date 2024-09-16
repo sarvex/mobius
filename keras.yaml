@@ -2,8 +2,6 @@ name: Keras train classifier from csv
 
 inputs:
 - {name: training_features, type: CSV, optional: true}
-outputs:
-- {name: final_loss, type: Float}
 
 implementation:
   container:
