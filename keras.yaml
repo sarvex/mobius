@@ -20,6 +20,17 @@ description: |-
 
 inputs:
 - {name: training_features, type: CSV, optional: true}
+- {name: training_labels, type: CSV, optional: true}
+- {name: network_json, type: KerasModelJson, optional: true}
+- {name: loss_name, type: String, default: categorical_crossentropy, optional: true}
+- {name: num_classes, type: Integer, optional: true}
+- {name: optimizer, type: String, default: rmsprop, optional: true}
+- {name: optimizer_config, type: JsonObject, optional: true}
+- {name: learning_rate, type: Float, default: '0.01', optional: true}
+- {name: num_epochs, type: Integer, default: '100', optional: true}
+- {name: batch_size, type: Integer, default: '32', optional: true}
+- {name: metrics, type: JsonArray, default: '["accuracy"]', optional: true}
+- {name: random_seed, type: Integer, default: '0', optional: true}
 
 implementation:
   container:
