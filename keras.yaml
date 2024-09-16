@@ -10,6 +10,8 @@ inputs:
 - {name: optimizer_config, type: JsonObject, optional: true}
 - {name: learning_rate, type: Float, default: '0.01', optional: true}
 - {name: num_epochs, type: Integer, default: '100', optional: true}
+- {name: batch_size, type: Integer, default: '32', optional: true}
+- {name: metrics, type: JsonArray, default: '["accuracy"]', optional: true}
 
 implementation:
   container:
