@@ -1,23 +1,5 @@
 name: Keras train classifier from csv
 
-description: |-
-  Transform DataFrame loaded from a CSV file.
-
-      Inputs:
-          table: Table to transform.
-          transform_code: Transformation code. Code is written in Python and can consist of multiple lines.
-              The DataFrame variable is called "df".
-              Examples:
-              - `df['prod'] = df['X'] * df['Y']`
-              - `df = df[['X', 'prod']]`
-              - `df.insert(0, "is_positive", df["X"] > 0)`
-
-      Outputs:
-          transformed_table: Transformed table.
-
-      Annotations:
-          author: Alexey Volkov <alexey.volkov@ark-kun.com>
-
 inputs:
 - {name: training_features, type: CSV, optional: true}
 - {name: training_labels, type: CSV, optional: true}
