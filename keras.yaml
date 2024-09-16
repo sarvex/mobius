@@ -5,8 +5,8 @@ description: |-
       Annotations:
           author: Alexey Volkov <alexey.volkov@ark-kun.com>
 inputs:
-- {name: training_features, type: CSV}
-- {name: training_labels, type: CSV}
+- {name: training_features, type: CSV, optional: true}
+- {name: training_labels, type: CSV, optional: true}
 - {name: network_json, type: KerasModelJson, optional: true}
 - {name: loss_name, type: String, default: categorical_crossentropy, optional: true}
 - {name: num_classes, type: Integer, optional: true}
