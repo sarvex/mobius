@@ -44,6 +44,7 @@ implementation:
 
           df = pandas.read_csv(
               table_path,
+			  on_bad_lines='skip'
           )
 
           df.insert(0, "was_tipped", df["tips"] > 0); del df["tips"]; df = df.fillna(0)
