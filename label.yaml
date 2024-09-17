@@ -43,8 +43,7 @@ implementation:
           import pandas
 
           df = pandas.read_csv(
-              table_path,
-			  on_bad_lines='skip'
+              table_path, on_bad_lines='skip'
           )
 
           df = df["was_tipped"] * 1
