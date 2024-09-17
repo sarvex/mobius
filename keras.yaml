@@ -78,6 +78,9 @@ implementation:
 
           # Convert class vectors to binary class matrices.
           y_train_one_hot = keras.utils.to_categorical(y_train_labels, num_classes)
+		  
+		  x_train = numpy.asarray(x_train).astype(numpy.float32)
+		  y_train_one_hot = numpy.asarray(y_train_one_hot).astype(numpy.float32)
 
           model_json_str = Path(network_json_path).read_text()
           model = keras.models.model_from_json(model_json_str)
