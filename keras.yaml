@@ -27,13 +27,13 @@ metadata:
     canonical_location: 'https://raw.githubusercontent.com/Ark-kun/pipeline_components/master/components/keras/Train_classifier/from_CSV/component.yaml'
 implementation:
   container:
-    image: tensorflow/tensorflow:2.2.0
+    image: tensorflow/tensorflow:2.17.0
     command:
     - sh
     - -c
     - (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location
-      'keras==2.3.1' 'pandas==1.4.3' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m
-      pip install --quiet --no-warn-script-location 'keras==2.3.1' 'pandas==1.4.3'
+      'keras==3.5.0' 'pandas==2.2.2' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m
+      pip install --quiet --no-warn-script-location 'keras==3.5.0' 'pandas==2.2.2'
       --user) && "$0" "$@"
     - python3
     - -u
