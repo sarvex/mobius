@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: untitled-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.19, pipelines.kubeflow.org/pipeline_compilation_time: '2024-09-17T09:04:56.142235',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.19, pipelines.kubeflow.org/pipeline_compilation_time: '2024-09-17T10:04:51.493301',
     pipelines.kubeflow.org/pipeline_spec: '{"name": "untitled"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.19}
 spec:
@@ -24,8 +24,8 @@ spec:
         mkdir -p "$(dirname "$output_path")"
         curl --get 'https://data.cityofchicago.org/resource/wrvz-psew.'"${format}"           --data-urlencode '$limit='"${limit}"           --data-urlencode '$where='"${where}"           --data-urlencode '$select='"${select}"           | tr -d '"' > "$output_path"  # Removing unneeded quotes around all numbers
       - /tmp/outputs/Table/data
-      - trip_id,taxi_id,trip_start_timestamp,trip_end_timestamp,trip_seconds,trip_miles,pickup_census_tract,dropoff_census_tract,pickup_community_area,dropoff_community_area,fare,tips,tolls,extras,trip_total,payment_type,company,pickup_centroid_latitude,pickup_centroid_longitude,pickup_centroid_location,dropoff_centroid_latitude,dropoff_centroid_longitude,dropoff_centroid_location
-      - trip_start_timestamp>='1900-01-01' AND trip_start_timestamp<'2100-01-01'
+      - tips,trip_seconds,trip_miles,pickup_community_area,dropoff_community_area,fare,tolls,extras,trip_total
+      - trip_start_timestamp >= '2019-01-01' AND trip_start_timestamp < '2019-02-01'
       - '1000'
       - csv
       image: byrnedo/alpine-curl@sha256:548379d0a4a0c08b9e55d9d87a592b7d35d9ab3037f4936f5ccd09d0b625a342
@@ -59,8 +59,9 @@ spec:
           type depends on format. CSV and TSV have header.", "name": "Table"}]}',
         pipelines.kubeflow.org/component_ref: '{"digest": "a6ee608a6f0b2fbca565a567a9ac0fdfcd138073460d344e182c9501c69461af"}',
         pipelines.kubeflow.org/arguments.parameters: '{"Format": "csv", "Limit": "1000",
-          "Select": "trip_id,taxi_id,trip_start_timestamp,trip_end_timestamp,trip_seconds,trip_miles,pickup_census_tract,dropoff_census_tract,pickup_community_area,dropoff_community_area,fare,tips,tolls,extras,trip_total,payment_type,company,pickup_centroid_latitude,pickup_centroid_longitude,pickup_centroid_location,dropoff_centroid_latitude,dropoff_centroid_longitude,dropoff_centroid_location",
-          "Where": "trip_start_timestamp>=''1900-01-01'' AND trip_start_timestamp<''2100-01-01''"}'}
+          "Select": "tips,trip_seconds,trip_miles,pickup_community_area,dropoff_community_area,fare,tolls,extras,trip_total",
+          "Where": "trip_start_timestamp >= ''2019-01-01'' AND trip_start_timestamp
+          < ''2019-02-01''"}'}
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.19
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
@@ -407,7 +408,7 @@ spec:
       image: python:3.9
     inputs:
       artifacts:
-      - {name: chicago-taxi-trips-dataset-Table, path: /tmp/inputs/table/data}
+      - {name: pandas-load-dataframe-in-csv-format-transformed_table, path: /tmp/inputs/table/data}
     outputs:
       artifacts:
       - {name: pandas-feature-dataframe-in-csv-format-transformed_table, path: /tmp/outputs/transformed_table/data}
@@ -480,13 +481,13 @@ spec:
         _parser = argparse.ArgumentParser(prog='Pandas Label DataFrame in CSV format', description='Label')
         _parser.add_argument("--table", dest="table_path", type=str, required=True, default=argparse.SUPPRESS)
         _parser.add_argument("--transformed-table", dest="transformed_table_path", type=_make_parent_dirs_and_return_path, required=True, default=argparse.SUPPRESS)
-        _parsed_args = vars(_parser.parse_args())
+        _parsed_args = vars(_parser.parse_args()pandas==2.2.2)
 
         _outputs = Pandas_Transform_DataFrame_in_CSV_format(**_parsed_args)
       image: python:3.9
     inputs:
       artifacts:
-      - {name: chicago-taxi-trips-dataset-Table, path: /tmp/inputs/table/data}
+      - {name: pandas-load-dataframe-in-csv-format-transformed_table, path: /tmp/inputs/table/data}
     outputs:
       artifacts:
       - {name: pandas-label-dataframe-in-csv-format-transformed_table, path: /tmp/outputs/transformed_table/data}
@@ -615,16 +616,16 @@ spec:
           - {name: pandas-label-dataframe-in-csv-format-transformed_table, from: '{{tasks.pandas-label-dataframe-in-csv-format.outputs.artifacts.pandas-label-dataframe-in-csv-format-transformed_table}}'}
       - name: pandas-feature-dataframe-in-csv-format
         template: pandas-feature-dataframe-in-csv-format
-        dependencies: [chicago-taxi-trips-dataset, pandas-load-dataframe-in-csv-format]
+        dependencies: [pandas-load-dataframe-in-csv-format]
         arguments:
           artifacts:
-          - {name: chicago-taxi-trips-dataset-Table, from: '{{tasks.chicago-taxi-trips-dataset.outputs.artifacts.chicago-taxi-trips-dataset-Table}}'}
+          - {name: pandas-load-dataframe-in-csv-format-transformed_table, from: '{{tasks.pandas-load-dataframe-in-csv-format.outputs.artifacts.pandas-load-dataframe-in-csv-format-transformed_table}}'}
       - name: pandas-label-dataframe-in-csv-format
         template: pandas-label-dataframe-in-csv-format
-        dependencies: [chicago-taxi-trips-dataset, pandas-load-dataframe-in-csv-format]
+        dependencies: [pandas-load-dataframe-in-csv-format]
         arguments:
           artifacts:
-          - {name: chicago-taxi-trips-dataset-Table, from: '{{tasks.chicago-taxi-trips-dataset.outputs.artifacts.chicago-taxi-trips-dataset-Table}}'}
+          - {name: pandas-load-dataframe-in-csv-format-transformed_table, from: '{{tasks.pandas-load-dataframe-in-csv-format.outputs.artifacts.pandas-load-dataframe-in-csv-format-transformed_table}}'}
       - name: pandas-load-dataframe-in-csv-format
         template: pandas-load-dataframe-in-csv-format
         dependencies: [chicago-taxi-trips-dataset]
