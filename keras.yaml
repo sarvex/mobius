@@ -108,7 +108,7 @@ implementation:
               shuffle=True
           )
 
-          model.save(model_path + '.h5')
+          model.export(model_path)
 
           metrics_history = {name: [float(value) for value in values] for name, values in history.history.items()}
           final_metrics = {name: values[-1] for name, values in metrics_history.items()}

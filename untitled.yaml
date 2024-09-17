@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: untitled-
-  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.19, pipelines.kubeflow.org/pipeline_compilation_time: '2024-09-17T11:26:08.666660',
+  annotations: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.19, pipelines.kubeflow.org/pipeline_compilation_time: '2024-09-17T14:07:41.642959',
     pipelines.kubeflow.org/pipeline_spec: '{"name": "untitled"}'}
   labels: {pipelines.kubeflow.org/kfp_sdk_version: 1.8.19}
 spec:
@@ -164,6 +164,8 @@ spec:
 
             # Convert class vectors to binary class matrices.
             y_train_one_hot = keras.utils.to_categorical(y_train_labels, num_classes)
+            x_train = numpy.asarray(x_train).astype(numpy.float32)
+            y_train_one_hot = numpy.asarray(y_train_one_hot).astype(numpy.float32)
 
             model_json_str = Path(network_json_path).read_text()
             model = keras.models.model_from_json(model_json_str)
@@ -192,7 +194,7 @@ spec:
                 shuffle=True
             )
 
-            model.save(model_path)
+            model.save(model_path + '.h5')
 
             metrics_history = {name: [float(value) for value in values] for name, values in history.history.items()}
             final_metrics = {name: values[-1] for name, values in metrics_history.items()}
@@ -302,14 +304,16 @@ spec:
           = training_features_df.to_numpy()\n    y_train_labels = training_labels_df.to_numpy()\n    print(''Training
           features shape:'', x_train.shape)\n    print(''Numer of training samples:'',
           x_train.shape[0])\n\n    # Convert class vectors to binary class matrices.\n    y_train_one_hot
-          = keras.utils.to_categorical(y_train_labels, num_classes)\n\n    model_json_str
+          = keras.utils.to_categorical(y_train_labels, num_classes)\n    x_train =
+          numpy.asarray(x_train).astype(numpy.float32)\n    y_train_one_hot = numpy.asarray(y_train_one_hot).astype(numpy.float32)\n\n    model_json_str
           = Path(network_json_path).read_text()\n    model = keras.models.model_from_json(model_json_str)\n\n    model.add(keras.layers.Activation(''softmax''))\n\n    #
           Initializing the optimizer\n    optimizer_config = optimizer_config or {}\n    optimizer_config[''learning_rate'']
           = learning_rate\n    optimizer = keras.optimizers.deserialize({\n        ''class_name'':
           optimizer,\n        ''config'': optimizer_config,\n    })\n\n    model.compile(\n        loss=loss_name,\n        optimizer=optimizer,\n        metrics=[''accuracy''],\n    )\n\n    history
-          = model.fit(\n        x_train,\n        y_train_one_hot,\n        batch_size=batch_size,\n        epochs=num_epochs,\n        shuffle=True\n    )\n\n    model.save(model_path)\n\n    metrics_history
-          = {name: [float(value) for value in values] for name, values in history.history.items()}\n    final_metrics
-          = {name: values[-1] for name, values in metrics_history.items()}\n    final_loss
+          = model.fit(\n        x_train,\n        y_train_one_hot,\n        batch_size=batch_size,\n        epochs=num_epochs,\n        shuffle=True\n    )\n\n    model.save(model_path
+          + ''.h5'')\n\n    metrics_history = {name: [float(value) for value in values]
+          for name, values in history.history.items()}\n    final_metrics = {name:
+          values[-1] for name, values in metrics_history.items()}\n    final_loss
           = final_metrics[''loss'']\n    return (final_loss, final_metrics, metrics_history)\n\nimport
           json\ndef _serialize_float(float_value: float) -> str:\n    if isinstance(float_value,
           str):\n        return float_value\n    if not isinstance(float_value, (float,
@@ -357,7 +361,7 @@ spec:
           "name": "Keras train classifier from csv", "outputs": [{"name": "model",
           "type": "KerasModelHdf5"}, {"name": "final_loss", "type": "Float"}, {"name":
           "final_metrics", "type": "JsonObject"}, {"name": "metrics_history", "type":
-          "JsonObject"}]}', pipelines.kubeflow.org/component_ref: '{"digest": "172d93c69cc0e1ce85773044134075ade50fc244edca44b0fb64c3dd49381039"}',
+          "JsonObject"}]}', pipelines.kubeflow.org/component_ref: '{"digest": "82cf40352b19a34ef283314dea445ffaba184c82359e5fcbfabe3a8aa483c5a4"}',
         pipelines.kubeflow.org/arguments.parameters: '{"batch_size": "32", "learning_rate":
           "0.01", "loss_name": "categorical_crossentropy", "num_classes": "0", "num_epochs":
           "100", "optimizer": "rmsprop", "optimizer_config": "{\"learning_rate\":
@@ -440,7 +444,7 @@ spec:
           {"annotations": {"author": "Alexey Volkov <alexey.volkov@ark-kun.com>",
           "canonical_location": "https://raw.githubusercontent.com/Ark-kun/pipeline_components/master/components/pandas/Transform_DataFrame/in_CSV_format/component.yaml"}},
           "name": "Pandas Feature DataFrame in CSV format", "outputs": [{"name": "transformed_table",
-          "type": "CSV"}]}', pipelines.kubeflow.org/component_ref: '{"digest": "9bf0ae8b3104ce3bef24e98718edadfc351f392fe2fa25eea38a26c2046cf6e5"}'}
+          "type": "CSV"}]}', pipelines.kubeflow.org/component_ref: '{"digest": "298b58c31a6f3b52226e2d733be0173e396ce63584915d12ab11ce61182076de"}'}
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.19
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
@@ -519,7 +523,7 @@ spec:
           {"annotations": {"author": "Alexey Volkov <alexey.volkov@ark-kun.com>",
           "canonical_location": "https://raw.githubusercontent.com/Ark-kun/pipeline_components/master/components/pandas/Transform_DataFrame/in_CSV_format/component.yaml"}},
           "name": "Pandas Label DataFrame in CSV format", "outputs": [{"name": "transformed_table",
-          "type": "CSV"}]}', pipelines.kubeflow.org/component_ref: '{"digest": "3d0ec2f20677d33ccac5d7c8ab5fcbcfa5a16da7320d3331c4400778ad448302"}'}
+          "type": "CSV"}]}', pipelines.kubeflow.org/component_ref: '{"digest": "3c8978c8abc05f29c5b34fe25709f80943e870d338f034344dc3e74fa02d2b8f"}'}
       labels:
         pipelines.kubeflow.org/kfp_sdk_version: 1.8.19
         pipelines.kubeflow.org/pipeline-sdk-type: kfp
