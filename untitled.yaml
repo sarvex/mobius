@@ -370,8 +370,8 @@ spec:
       - sh
       - -c
       - (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location
-        'pandas==1.0.4' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install
-        --quiet --no-warn-script-location 'pandas==1.0.4' --user) && "$0" "$@"
+        'pandas==2.2.2' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install
+        --quiet --no-warn-script-location 'pandas==2.2.2' --user) && "$0" "$@"
       - python3
       - -u
       - -c
@@ -420,9 +420,9 @@ spec:
           Alexey Volkov <alexey.volkov@ark-kun.com>", "implementation": {"container":
           {"args": ["--table", {"inputPath": "table"}, "--transformed-table", {"outputPath":
           "transformed_table"}], "command": ["sh", "-c", "(PIP_DISABLE_PIP_VERSION_CHECK=1
-          python3 -m pip install --quiet --no-warn-script-location ''pandas==1.0.4''
+          python3 -m pip install --quiet --no-warn-script-location ''pandas==2.2.2''
           || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location
-          ''pandas==1.0.4'' --user) && \"$0\" \"$@\"", "python3", "-u", "-c", "def
+          ''pandas==2.2.2'' --user) && \"$0\" \"$@\"", "python3", "-u", "-c", "def
           _make_parent_dirs_and_return_path(file_path: str):\n    import os\n    os.makedirs(os.path.dirname(file_path),
           exist_ok=True)\n    return file_path\n\ndef Pandas_Transform_DataFrame_in_CSV_format(\n    table_path,\n    transformed_table_path,\n):\n    import
           pandas\n\n    df = pandas.read_csv(\n        table_path, on_bad_lines=''skip''\n    )\n\n    df
@@ -449,8 +449,8 @@ spec:
       - sh
       - -c
       - (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location
-        'pandas==1.0.4' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install
-        --quiet --no-warn-script-location 'pandas==1.0.4' --user) && "$0" "$@"
+        'pandas==2.2.2' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install
+        --quiet --no-warn-script-location 'pandas==2.2.2' --user) && "$0" "$@"
       - python3
       - -u
       - -c
@@ -499,8 +499,8 @@ spec:
           "implementation": {"container": {"args": ["--table", {"inputPath": "table"},
           "--transformed-table", {"outputPath": "transformed_table"}], "command":
           ["sh", "-c", "(PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet
-          --no-warn-script-location ''pandas==1.0.4'' || PIP_DISABLE_PIP_VERSION_CHECK=1
-          python3 -m pip install --quiet --no-warn-script-location ''pandas==1.0.4''
+          --no-warn-script-location ''pandas==2.2.2'' || PIP_DISABLE_PIP_VERSION_CHECK=1
+          python3 -m pip install --quiet --no-warn-script-location ''pandas==2.2.2''
           --user) && \"$0\" \"$@\"", "python3", "-u", "-c", "def _make_parent_dirs_and_return_path(file_path:
           str):\n    import os\n    os.makedirs(os.path.dirname(file_path), exist_ok=True)\n    return
           file_path\n\ndef Pandas_Transform_DataFrame_in_CSV_format(\n    table_path,\n    transformed_table_path,\n):\n    import
