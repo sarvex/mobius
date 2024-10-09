@@ -11,9 +11,9 @@ spec:
     	- sh
     	- -c
     	- (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location
-      	  'tensorflow-datasets==4.9.6' 'scikit-learn==1.5.2' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m
-      	  pip install --quiet --no-warn-script-location 'tensorflow-datasets==4.9.6' 'scikit-learn==1.5.2'
-      	  --user) && "$0" "$@"
+          'tensorflow-datasets==4.9.6' 'scikit-learn==1.5.2' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m
+          pip install --quiet --no-warn-script-location 'tensorflow-datasets==4.9.6' 'scikit-learn==1.5.2'
+          --user) && "$0" "$@"
         - python3
         - -c
         - |
