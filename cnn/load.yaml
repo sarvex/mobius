@@ -1,0 +1,81 @@
+apiVersion: v2
+kind: Component
+metadata:
+  name: Load and Split TensorFlow Dataset
+  description: Loads a dataset from TensorFlow Datasets (TFDS), splits it into training and test sets, and saves them as compressed NumPy files.
+spec:
+  implementation:
+    container:
+      image: tensorflow/tensorflow:2.17.0  # or any other image that has tensorflow_datasets installed
+      command:
+    	- sh
+    	- -c
+    	- (PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet --no-warn-script-location
+      	  'tensorflow-datasets==4.9.6' 'scikit-learn==1.5.2' || PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m
+      	  pip install --quiet --no-warn-script-location 'tensorflow-datasets==4.9.6' 'scikit-learn==1.5.2'
+      	  --user) && "$0" "$@"
+        - python3
+        - -c
+        - |
+          import tensorflow_datasets as tfds
+          import numpy as np
+          from sklearn.model_selection import train_test_split
+
+          def load_and_split_data(dataset_name, split, train_split_ratio, output_train_data_path, output_test_data_path):
+              # Load the dataset
+              dataset = tfds.load(dataset_name, split=split, as_supervised=True)
+
+              # Convert the dataset to numpy arrays
+              x_data = []
+              y_data = []
+              for x, y in tfds.as_numpy(dataset):
+                  x_data.append(x)
+                  y_data.append(y)
+              
+              # Convert lists to numpy arrays
+              x_data = np.array(x_data)
+              y_data = np.array(y_data)
+
+              # Split the dataset into training and test sets
+              x_train, x_test, y_train, y_test = train_test_split(
+                  x_data, y_data, test_size=(1 - train_split_ratio), random_state=42
+              )
+
+              # Save the training data
+              np.savez_compressed(output_train_data_path, x_train=x_train, y_train=y_train)
+
+              # Save the test data
+              np.savez_compressed(output_test_data_path, x_test=x_test, y_test=y_test)
+
+          # Execute the function with the provided parameters
+          load_and_split_data(
+            '{{inputs.dataset_name}}', '{{inputs.split}}', float('{{inputs.train_split_ratio}}'),
+            '{{outputs.train_data}}', '{{outputs.test_data}}'
+          )
+
+  inputs:
+    - name: dataset_name
+      type: String
+      description: Name of the dataset from TensorFlow Datasets (e.g., mnist, cifar10).
+      default: "mnist"
+      
+    - name: split
+      type: String
+      description: Dataset split to load (e.g., train, test, validation).
+      default: "train"
+      
+    - name: train_split_ratio
+      type: float
+      description: Ratio of the dataset to use for training (e.g., 0.8 for 80% train and 20% test).
+      default: 0.8
+
+  outputs:
+    - name: train_data
+      type: Dataset
+      description: The training dataset saved as a compressed NumPy file.
+      
+    - name: test_data
+      type: Dataset
+      description: The test dataset saved as a compressed NumPy file.
+
+  schemaVersion: 2.0.0

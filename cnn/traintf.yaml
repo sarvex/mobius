@@ -1,0 +1,87 @@
+apiVersion: v2
+kind: Component
+metadata:
+  name: Train Model with TFJob
+  description: Trains a CNN model using the provided architecture in JSON format, with customizable optimizer, loss, and metrics using TFJob for distributed training.
+spec:
+  implementation:
+    tfJob:
+      worker:
+        replicas: 2  # Number of worker nodes for distributed training
+        container:
+          image: tensorflow/tensorflow:2.17.0  # TensorFlow image with the required dependencies
+          command:
+            - python3
+            - -c
+            - |
+              import numpy as np
+              from tensorflow.keras.models import model_from_json
+              import json
+
+              def train_model(train_data_path, model_json, optimizer, loss, metrics, model_output_path):
+                  # Load the training data
+                  data = np.load(train_data_path)
+                  x_train, y_train = data['x_train'], data['y_train']
+
+                  # Load the model architecture from JSON
+                  model = model_from_json(model_json)
+
+                  # Parse the metrics string into a list
+                  metrics_list = json.loads(metrics)
+
+                  # Compile the model with the provided optimizer, loss, and metrics
+                  model.compile(optimizer=optimizer,
+                                loss=loss,
+                                metrics=metrics_list)
+
+                  # Train the model
+                  model.fit(x_train, y_train, epochs=10)
+
+                  # Save the model
+                  model.save(model_output_path)
+
+              # Execute the function with input/output paths
+              train_model(
+                '{{inputs.train_data}}',
+                '{{inputs.model_json}}',
+                '{{inputs.optimizer}}',
+                '{{inputs.loss}}',
+                '{{inputs.metrics}}',
+                '{{outputs.model_output}}'
+              )
+
+      ps:  # Parameter Server to manage model parameters
+        replicas: 1  # Number of parameter server nodes
+        container:
+          image: tensorflow/tensorflow:2.17.0  # TensorFlow image with the required dependencies
+
+  inputs:
+    - name: train_data
+      type: Dataset
+      description: The input training dataset saved as a compressed NumPy file (containing x_train and y_train).
+      
+    - name: model_json
+      type: String
+      description: The Keras model architecture in JSON format.
+      
+    - name: optimizer
+      type: String
+      description: The optimizer to use for model compilation (e.g., 'adam', 'sgd').
+      default: 'adam'
+      
+    - name: loss
+      type: String
+      description: The loss function to use for model compilation (e.g., 'sparse_categorical_crossentropy').
+      default: 'sparse_categorical_crossentropy'
+      
+    - name: metrics
+      type: String
+      description: The metrics to use for model evaluation, provided as a JSON array (e.g., '["accuracy"]').
+      default: '["accuracy"]'
+
+  outputs:
+    - name: model_output
+      type: Model
+      description: The trained model saved as a Keras model.
+
+  schemaVersion: 2.0.0

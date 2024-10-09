@@ -1,0 +1,44 @@
+apiVersion: v2
+kind: Component
+metadata:
+  name: Evaluate Model
+  description: Loads a trained model and test data, evaluates the model, and prints the test loss and accuracy.
+spec:
+  implementation:
+    container:
+      image: tensorflow/tensorflow:2.17.0  # Ensure TensorFlow and necessary packages are installed
+      command:
+        - python3
+        - -c
+        - |
+          import numpy as np
+          import tensorflow as tf
+
+          def evaluate_model(model_path, test_data_path):
+              # Load the test data
+              data = np.load(test_data_path)
+              x_test, y_test = data['x_test'], data['y_test']
+
+              # Load the trained model
+              model = tf.keras.models.load_model(model_path)
+
+              # Evaluate the model
+              loss, accuracy = model.evaluate(x_test, y_test)
+              print(f"Test Loss: {loss}")
+              print(f"Test Accuracy: {accuracy}")
+
+          # Call the function with the provided input paths
+          evaluate_model('{{inputs.model}}', '{{inputs.test_data}}')
+
+  inputs:
+    - name: model
+      type: Model
+      description: The trained model file path for evaluation.
+      
+    - name: test_data
+      type: Dataset
+      description: The test dataset saved as a compressed NumPy file (containing x_test and y_test).
+
+  outputs: []
+  
+  schemaVersion: 2.0.0
